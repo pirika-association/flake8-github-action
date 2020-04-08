@@ -21,7 +21,8 @@ async function runFlake8(cwd?: string) {
 
 type Annotation = octokit.ChecksUpdateParamsOutputAnnotations;
 // Regex the output for error lines, then format them in
-function parseFlake8Output(output: string): Annotation[] {
+function parseFlake8Output(output: string, workingDirectory?: string): Annotation[] {
+const wd = (workingDirectory || "").replace('./', '') + '/';
   // Group 0: whole match
   // Group 1: filename
   // Group 2: line number
@@ -36,7 +37,7 @@ function parseFlake8Output(output: string): Annotation[] {
     let match = error.match(regex);
     if (match) {
       // Chop `./` off the front so that Github will recognize the file path
-      const normalized_path = match[1].replace('./', '');
+      const normalized_path = wd + match[1].replace('./', '');
       const line = parseInt(match[2]);
       const column = parseInt(match[3]);
       const annotation_level = <const> 'failure';
@@ -81,7 +82,7 @@ async function run() {
   try {
   const workingDirectory = core.getInput('workingDirectory');
     const flake8Output = await runFlake8(workingDirectory);
-    const annotations = parseFlake8Output(flake8Output);
+    const annotations = parseFlake8Output(flake8Output, workingDirectory);
     if (annotations.length > 0) {
       console.log(annotations);
       const checkName = core.getInput('checkName');
