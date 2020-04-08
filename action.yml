@@ -10,6 +10,8 @@ inputs:
 
       Generally the same as the job that uses this action'
     required: true
+  workingDirectory:
+    description: 'Specify run directory if needed'
 runs:
   using: 'node12'
   main: 'lib/main.js'

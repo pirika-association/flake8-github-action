@@ -5,9 +5,10 @@ import * as octokit from '@octokit/rest';
 
 const { GITHUB_TOKEN } = process.env;
 
-async function runFlake8() {
+async function runFlake8(cwd?: string) {
   let myOutput = '';
   let options = {
+    cwd,
     listeners: {
       stdout: (data: Buffer) => {
         myOutput += data.toString();
@@ -78,7 +79,8 @@ async function createCheck(check_name: string, title: string, annotations: Annot
 
 async function run() {
   try {
-    const flake8Output = await runFlake8();
+  const workingDirectory = core.getInput('workingDirectory');
+    const flake8Output = await runFlake8(workingDirectory);
     const annotations = parseFlake8Output(flake8Output);
     if (annotations.length > 0) {
       console.log(annotations);
