@@ -22,7 +22,7 @@ async function runFlake8(cwd?: string) {
 type Annotation = octokit.ChecksUpdateParamsOutputAnnotations;
 // Regex the output for error lines, then format them in
 function parseFlake8Output(output: string, workingDirectory?: string): Annotation[] {
-const wd = (workingDirectory || "").replace('./', '') + '/';
+  const wd = (workingDirectory || "").replace('./', '') + '/';
   // Group 0: whole match
   // Group 1: filename
   // Group 2: line number
@@ -80,7 +80,7 @@ async function createCheck(check_name: string, title: string, annotations: Annot
 
 async function run() {
   try {
-  const workingDirectory = core.getInput('workingDirectory');
+    const workingDirectory = core.getInput('workingDirectory');
     const flake8Output = await runFlake8(workingDirectory);
     const annotations = parseFlake8Output(flake8Output, workingDirectory);
     if (annotations.length > 0) {
